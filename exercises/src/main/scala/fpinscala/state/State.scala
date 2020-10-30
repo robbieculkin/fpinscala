@@ -129,13 +129,6 @@ case class State[S,+A](run: S => (A, S)) {
   })
 }
 
-
-sealed trait Input
-case object Coin extends Input
-case object Turn extends Input
-
-case class Machine(locked: Boolean, candies: Int, coins: Int)
-
 object State {
   //needed for map in 6.10
   def unit[S,A](a:A): State[S,A] =
@@ -144,6 +137,27 @@ object State {
   def sequence[S,A](l: List[State[S, A]]): State[S, List[A]] =
     l.foldRight(unit[S, List[A]](List[A]()))((a,b) => a.map2(b)(_::_))
 
-  //optional, TODO to warmup for fall quarter
-  def simulateMachine(inputs: List[Input]): State[Machine, (Int, Int)] = ???
 }
+
+sealed trait Input
+case object Coin extends Input
+case object Turn extends Input
+
+case class Machine(locked: Boolean, candies: Int, coins: Int)
+
+// object Candy {
+//   def update = (i: Input) => (s: Machine) => 
+//     (i,s) match {
+//       case (_, Machine(_, 0, _)) => s // no candy left
+//       case (Coin, Machine(_, cand, coin)) => Machine(false, cand, coin+1)
+//       case (Turn, Machine(false,cand,coin)) => Machine(true, cand-1,coin)
+//       case (Turn, Machine(true,_,_)) => s
+//     }
+
+//   def simulateMachine(inputs: List[Input]): State[Machine, (Int, Int)] = 
+//     for {
+//       _ <- sequence(inputs map (modify[Machine] _ compose update))
+//       s <- get
+//     } yield (s.candies, s.coins)
+
+// }
