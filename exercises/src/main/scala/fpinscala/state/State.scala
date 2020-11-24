@@ -24,6 +24,9 @@ object RNG {
   def unit[A](a: A): Rand[A] =
     rng => (a, rng)
 
+  def boolean(rng: RNG): (Boolean, RNG) =
+    rng.nextInt match { case (i,rng2) => (i%2==0,rng2) }
+
   // maps a function f to the output of random A generator s
   def map[A,B](s: Rand[A])(f: A => B): Rand[B] =
     rng => {

@@ -52,6 +52,16 @@ trait Stream[+A] {
       case _ => empty
   }
 
+  def zipWith_traitmethod[B,C](s2: Stream[B])(f: (A,B) => C): Stream[C] =
+    unfold((this, s2)) {
+      case (Cons(h1,t1), Cons(h2,t2)) =>
+        Some((f(h1(), h2()), (t1(), t2())))
+      case _ => None
+    }
+
+  def zip[B](s2: Stream[B]): Stream[(A,B)] =
+    zipWith_traitmethod(s2)((_,_))
+
   // checks that all elements in the Stream match a given predicate
   // terminate the traversal as soon as it encounters a nonmatching value
   def forAll(p: A => Boolean): Boolean = 
