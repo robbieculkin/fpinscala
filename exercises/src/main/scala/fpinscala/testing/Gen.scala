@@ -130,8 +130,8 @@ object Prop {
     choose(1,4).map(Executors.newFixedThreadPool) -> .75,
     unit(Executors.newCachedThreadPool) -> .25)
 
-  def forAllPar[A](g: Gen[A])(f: A => Par[Boolean]): Prop =
-    forAll(S.map2(g)((_,_))) { case (s,a) => f(a)(s).get }
+  // def forAllPar[A](g: Gen[A])(f: A => Par[Boolean]): Prop =
+  //   forAll(S.map2(g)((_,_))) { case (s,a) => f(a)(s).get }
 
 }
 
@@ -211,9 +211,9 @@ object Gen {
       Par.fork { Par.map2(p, Par.unit(i))(_ + _) }))
 
   // 8.17
-  val forkProp = Prop.forAllPar(pint2)(i =>
-    equal(Par.fork(i), i)
-  )
+  // val forkProp = Prop.forAllPar(pint2)(i =>
+  //   equal(Par.fork(i), i)
+  // )
 }
 
 case class SGen[+A](forSize: Int => Gen[A]) {
@@ -223,8 +223,8 @@ case class SGen[+A](forSize: Int => Gen[A]) {
   def map[B](f: A => B): SGen[B] =
     SGen(forSize(_) map f)
 
-  def map2[B,C](g: Gen[B])(f: (A,B) => C): Gen[C] =
-    Gen(sample.map2(g.sample)(f))
+  // def map2[B,C](g: Gen[B])(f: (A,B) => C): Gen[C] =
+  //   Gen(sample.map2(g.sample)(f))
 
   def flatMap[B](f: A => SGen[B]): SGen[B] = 
     SGen(n => 

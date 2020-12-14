@@ -140,6 +140,12 @@ object Par {
   def choiceNViaChooser[A](n: Par[Int])(choices: List[Par[A]]): Par[A] = 
     chooser(n)(i => choices(i))
 
+  def flatMap[A,B](p: Par[A])(choices: A => Par[B]): Par[B] =
+    es => {
+      val k = run(es)(p).get
+      run(es)(choices(k))
+    }
+
   // 7.14
   def join[A](a: Par[Par[A]]): Par[A] = 
     es => run(es)(run(es)(a).get())
